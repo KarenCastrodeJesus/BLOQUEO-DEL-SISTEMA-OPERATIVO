@@ -1,0 +1,28 @@
+# Instalar
+yay -S pam_usb-git
+
+# Ingresar la memoria para crear la llave de acceso
+sudo pamusb-conf --add-device mi_llave_karen
+sudo pamusb-conf --add-user karen
+pamusb-check karen
+sudo nano /etc/pam.d/system-auth
+# Editar dentro, en la primera linea hay una linea en blanco, en esa linea en blanco colocar: auth            sufficient            pam_usb.so
+# Dar ctrl + o para guardar cambios y ctrl + x para cerrar
+
+# Crear el script que bloqueara el sistema: 
+#!/bin/bash
+# Script de seguridad para Archcraft
+while true; do
+  if ! pamusb-check yareli; then
+    echo "Llave retirada. Bloqueando sistema..."
+    loginctl lock-session  # Comando de bloqueo para Archcraft
+  fi
+  sleep 2  # Revisa la USB cada 2 segundos
+done
+
+# Ejecutar el siguiente comando para verificar que todo este bien
+bash bloqueo.sh # bloqueo.sh es el nombre de mi script
+
+# Crear nueva llave de acceso
+sudo pamusb-conf --add-device llave_opcion
+sudo pamusb-conf --add-user karen
